@@ -48,3 +48,23 @@ def login():
             loginList = ["2",username,password,address]
             createsend_recv(loginList)
 
+#this function will send the login information to the server and wait for server authentication.
+def loginsend_recv(lists):
+    lists = json.dumps(lists)
+    client.sendall(bytes(lists,encoding="utf-8"))
+    receive_msg = client.recv(10000).decode(FORMAT)
+    status = None
+    if receive_msg:
+        receive_msg = json.loads(receive_msg)
+        if receive_msg[0] == "yes":
+            print("\nSuccessfully Logged In\n")
+            status = receive_msg
+            return status
+        else:
+            print("\nWrong Username or Password\n")
+            status = receive_msg
+            return status
+    else:
+        print("\n[SERVER] SERVER DOWN\n")
+        status = "no"
+        return status
