@@ -118,3 +118,41 @@ def userInterface(username):
             message = json.dumps(message)
             client.sendall(bytes(message,encoding="utf-8"))
             changeAddress()
+
+#this function is for admin interface where admin can choose what operation they want to do
+def adminInterface(username):
+    repeat = True
+    while repeat:
+        print("\nADMIN INTERFACE")
+        print("\n1. Add New Menu")
+        print("2. Customer Order History")
+        print("3. Sales of The Day")
+        print("\nPress CTRL + C To Exit The Program\n")
+        interface = input("Please Select: ")
+        if interface == "1":
+            message = ["add", username]
+            message = json.dumps(message)
+            client.sendall(bytes(message,encoding="utf-8"))
+            addMenu()
+        
+        elif interface == "2":
+            message = ["customer", username]
+            message = json.dumps(message)
+            client.sendall(bytes(message,encoding="utf-8"))
+            receive_msg = client.recv(5000).decode(FORMAT)
+            if receive_msg:
+                receive_msg = json.loads(receive_msg)
+                customerHistory(receive_msg)
+            else:
+                print("\n[SERVER] SERVER DOWN\n")
+
+        elif interface == "3":
+            message = ["sales", username]
+            message = json.dumps(message)
+            client.sendall(bytes(message,encoding="utf-8"))
+            receive_msg = client.recv(10000).decode(FORMAT)
+            if receive_msg:
+                receive_msg = json.loads(receive_msg)
+                salesDay(receive_msg)
+            else:
+                print("\n[SERVER] SERVER DOWN\n")
