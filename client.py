@@ -290,3 +290,18 @@ def salesDay(receive_msg):
     else:
         total = receive_msg
     print(f"Total Sales for {today}: RM {total}")
+
+#this function use to check price format entered by the admin when creating new menu
+def checkPrice(price):
+    try:
+        price = int(price)
+        check = ["correct", price]
+        return check
+    except ValueError:
+        try:
+            price = float(price)
+            check = ["correct", price]
+            return check
+        except ValueError:
+            check = ["incorrect"]
+            return check
