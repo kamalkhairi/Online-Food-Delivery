@@ -305,3 +305,22 @@ def checkPrice(price):
         except ValueError:
             check = ["incorrect"]
             return check
+
+#main function         
+if __name__ == "__main__":
+    try:
+        try:
+            while True:
+               login()
+        except BrokenPipeError:
+            print("[SERVER] SERVER DOWN")
+            try:
+                sys.exit(0)
+            except SystemExit:
+                os._exit(0)    
+    except KeyboardInterrupt:
+        print('[CLIENT] EXIT PROGRAM')
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)    
