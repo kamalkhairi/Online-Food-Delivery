@@ -156,3 +156,85 @@ def adminInterface(username):
                 salesDay(receive_msg)
             else:
                 print("\n[SERVER] SERVER DOWN\n")
+
+#this function is the interface for the customer to see all of their menu and allow them to select the menu
+def menu(receive_msg):
+    print("\nWELCOME TO OUR RESTAURANT\n")
+    a = 0
+    y = 1
+    for x in range(len(receive_msg)):
+        print (f"{y}. {receive_msg[x][a]}, RM: {receive_msg[x][a+1]}")
+        y = y+1
+
+    order = []
+    add = True
+    while add:
+        menu, quantity = None, None
+        select = True  
+        while select:
+            repeat1 = True
+            while repeat1:
+                menu = input("\nPlease select menu: ")
+                if menu.isnumeric() == True:
+                    repeat1 = False
+            menu=int(menu)
+            for z in range(1, y):
+                if(menu == z):
+                    select = False
+        repeat2 = True
+        while repeat2:
+            quantity = input("Quantity: ")
+            if quantity.isnumeric() == True:
+                if int(quantity) > 0:
+                    repeat2 = False  
+        quantity = int(quantity)          
+        orderList = [menu, quantity]   
+        order.extend(orderList)
+        add = input("\nAdd More Order? y/n: ")
+        if add == 'n' or add == 'N':
+            add = False
+        else:
+            add = True
+    lists = json.dumps(order)
+    client.sendall(bytes(lists,encoding="utf-8"))
+
+    result = client.recv(10000).decode(FORMAT)
+    if result:
+        result = json.loads(result)
+        print(f"\n[SERVER] Total Price: RM{result[0]}")
+        print(f"[SERVER] We Only Accept Cash On Delivery via Our Delivery Rider")
+        print(f"[SERVER] We Will Sent Your Order Shortly at {result[1]}\n")
+
+    else:
+        print("\n[SERVER] SERVER DOWN\n")
+
+
+#this function is the interface for customer to see their order history
+def history(receive_msg):
+    print("\nORDER HISTORY\n")
+    z = 0
+    y = 1
+    for x in range(len(receive_msg)):
+        print (f"{y}. {receive_msg[x][z]}, Quantity: {receive_msg[x][z+1]}, RM: {receive_msg[x][z+2]}, {receive_msg[x][z+3]} ")
+        y = y+1
+
+#this function is the interface for customer to change their delivery address
+def changeAddress():
+    print("\nCHANGE DELIVERY ADDRESS\n")
+    repeat = True
+    while repeat:
+        address = input("New Address: ")
+        if address:
+            repeat = False
+        else:
+            repeat = True
+    address = address.strip()
+    lists = [address] 
+    lists = json.dumps(address)
+    client.sendall(bytes(lists,encoding="utf-8"))
+    receive_msg = client.recv(10000).decode(FORMAT)
+    if receive_msg:
+        receive_msg = json.loads(receive_msg)
+        print(receive_msg[0])
+    else:
+        print("\n[SERVER] SERVER DOWN\n")
