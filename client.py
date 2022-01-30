@@ -238,3 +238,55 @@ def changeAddress():
         print(receive_msg[0])
     else:
         print("\n[SERVER] SERVER DOWN\n")
+
+#this function is the interface that allow admin to add new menu to the database
+def addMenu():
+    print("\nADD NEW MENU\n")
+    repeat = True
+    while repeat:
+        menu = input("Menu Name: ")
+        if menu:
+            repeat = False
+        else:
+            repeat = True
+
+    check = ["incorrect"]
+    while check[0] == "incorrect":
+        price = input("Price: ")
+        check = checkPrice(price)
+        if check[0] == "correct":
+            if check[1] > 0:
+                check[0] = "correct"
+            else:
+                check[0] = "incorrect"
+    price = float(price)
+    price = "{:.2f}".format(price)
+    menu = menu.strip()
+    lists = [menu, price]
+    lists = json.dumps(lists)
+    client.sendall(bytes(lists,encoding="utf-8"))
+    receive_msg = client.recv(10000).decode(FORMAT)
+    if receive_msg:
+        receive_msg = json.loads(receive_msg)
+        print(receive_msg[0])
+    else:
+        print("\n[SERVER] SERVER DOWN\n")
+
+#this function is the interface that allow admin to see all of the customers orders
+def customerHistory(receive_msg):
+    print("\nCUSTOMER ORDER HISTORY\n")
+    z = 0
+    y = 1
+    for x in range(len(receive_msg)):
+        print (f"{y}. {receive_msg[x][z]}, {receive_msg[x][z+1]}, Quantity: {receive_msg[x][z+2]}, RM: {receive_msg[x][z+3]}, {receive_msg[x][z+4]}, {receive_msg[x][z+5]} ")
+        y = y+1
+
+#this function show admin the total sales the restaurant have made today
+def salesDay(receive_msg):
+    print("\nSALES OF THE DAY\n")
+    today = str(date.today())
+    if receive_msg == None:
+        total = "0"
+    else:
+        total = receive_msg
+    print(f"Total Sales for {today}: RM {total}")
