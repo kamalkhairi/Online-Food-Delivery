@@ -68,3 +68,53 @@ def loginsend_recv(lists):
         print("\n[SERVER] SERVER DOWN\n")
         status = "no"
         return status
+
+#this server will send new account information to the server and wait for server authentication
+def createsend_recv(lists):
+    lists = json.dumps(lists)
+    client.sendall(bytes(lists,encoding="utf-8"))
+    receive_msg = client.recv(10000).decode(FORMAT)
+    if receive_msg:
+        if receive_msg == "yes":
+            print("\nAccount Created Successfully\n")
+        else:
+            print("\nAccount with That Username Already Registered!\n")
+    else:
+        print("\n[SERVER] SERVER DOWN\n")
+
+
+#this function is for user interface where customer can select which operation they want to use
+def userInterface(username):
+    repeat = True
+    while repeat:
+        print("\nUSER INTERFACE")
+        print("\n1. Order Menu")
+        print("2. Order History")
+        print("3. Change Delivery Address")
+        print("\nPress CTRL + C To Exit The Program\n")
+        interface = input("Please Select: ")
+        if interface == "1":
+            message = ["menu", username]
+            message = json.dumps(message)
+            client.sendall(bytes(message,encoding="utf-8"))
+            receive_msg = client.recv(10000).decode(FORMAT)
+            if receive_msg:
+                receive_msg = json.loads(receive_msg)
+                menu(receive_msg)
+            else:
+                print("\n[SERVER] SERVER DOWN\n")
+        elif interface == "2":
+            message = ["history", username]
+            message = json.dumps(message)
+            client.sendall(bytes(message,encoding="utf-8"))
+            receive_msg = client.recv(10000).decode(FORMAT)
+            if receive_msg:
+                receive_msg = json.loads(receive_msg)
+                history(receive_msg)
+            else:
+                print("\n[SERVER] SERVER DOWN\n")
+        elif interface == "3":
+            message = ["change", username]
+            message = json.dumps(message)
+            client.sendall(bytes(message,encoding="utf-8"))
+            changeAddress()
